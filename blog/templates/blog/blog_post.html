@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block body%}
+
+<div class="container">
+	<div class="row blog">
+		<div class="col-xs-12">
+			<div class="row content">
+				<div class="col-xs-12">
+					<div class="row post-header">
+						<div class="col-xs-12">
+							<div class="row post-header-title">
+								<div class="col-xs-12">
+									{{post.title}}
+								</div>
+							</div>
+							<div class="row post-header-title">
+								<div class="col-xs-12">
+									{{post.publication_date}}
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row post_body">
+						<div class="col-xs-12">
+							{{post.body}}
+						</div>
+					</div>
+					<hr/>
+					<div id="comments" class="row post-comments">
+						<div class="col-xs-12">
+							<div class="row comment-content">
+								<div class="col-xs-12">
+									<p> COMENTARIES: </P>
+									{% for comm in post.getComments %}
+									<hr/>
+									<div id="comment-{{comm.id}}" class="row comment">
+										<div class="col-xs-12">
+											<div class="row comment-title">
+												<div class="col-xs-12">
+													{{comm.title}}
+												</div>
+											</div>
+											<div class="row comment-info">
+												<div class="col-xs-12">
+													{{comm.author}}--{{comm.publication_date}}
+												</div>
+											</div>
+											<div class="row comment-body">
+												<div class="col-xs-12">
+													{{comm.body}}
+												</div>
+											</div>
+										</div>
+									</div>
+									{% empty %}
+										<p> No comments on that post. </p>
+									{% endfor %}
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xs-12">
+									<form  action="{% url 'blog_post' post.id %}" method="post">{% csrf_token %}
+								 		<div class="form-group">
+											<label for="id_author">Author</label>
+											<input type="text" class="form-control" name="author" id="id_author" placeholder="Enter your name">
+									  	</div>
+									  	<div class="form-group">
+											<label for="id_title">Title</label>
+											<input type="text" class="form-control" name="title" id="id_title" placeholder="Enter the title">
+									  	</div>
+								 		<div class="form-group">
+											<textarea class="form-control" id="id_body" name="body" rows="6"></textarea>
+										</div>	
+										<button type="submit" class="btn btn-default">Submit</button>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row footer">
+				<div class="col-xs-12">
+					FOOTER
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %} 

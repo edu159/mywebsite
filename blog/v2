@@ -1,0 +1,32 @@
+from django.shortcuts import render
+import calendar
+
+from blog.models import Post
+from blog.models import Category
+from blog.models import BlogRoll
+
+def post_shortener(post):
+    text_splitted = post.body.split()
+    if len(text_splitted) > 250:
+        post.body = " ".join(text_splitted[:250])
+        post.long_post= True
+    return post
+
+def blogIndex(request):
+    recent_post_list = Post.objects.order_by('publication_date')
+    map(post_shortener, recent_post_list)
+    category_list = Category.objects.order_by('name')
+    year_list = [date.year for date in Post.objects.datetimes('publication_date', 'year', order='ASC')]
+    posts_ina_year = dict([(year, Post.objects.filter(publication_date__year = year)) for year in year_list])
+    year_numpost_dic = dict([(year,len(posts_ina_year[year])) for year in year_list])
+    month_numpost_dic = dict([(year, dict([(month, len(filter(lambda x:x.publication_date.strftime('%B')==month, posts_ina_year[year]))) for month in calendar.month_name][1:])) for year in year_list])
+    blogroll_list = BlogRoll.objects.order_by('title')
+	ordered_month_list = calendar.month_name[1:]
+    context = { 'recent_post_list': recent_post_list, 
+                'category_list' : category_list, 
+                'year_numpost_dic': year_numpost_dic, 
+                'blogroll_list' : blogroll_list,
+                'month_numpost_dic': month_numpost_dic,}
+				'ordered_month_list': ordered_month_list,
+
+    return render(request, 'blog/blog.html', context)
